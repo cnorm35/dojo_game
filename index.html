@@ -9,25 +9,107 @@
 
     <script type="text/javascript">
 
-    window.onload = function() {
-                                //Height and Width and AUTO tries to use webgl but will default to canvas if not available.
+    // window.onload = function() {
+    //                             Height and Width and AUTO tries to use webgl but will default to canvas if not available.
         var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
 
         function preload () {
-
+                    //First parameter is the key you will refer to.
             game.load.image('dojo', 'assets/dojo.png');
-
+            game.load.image('bike', 'assets/bike.png');
+            game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
         }
 
         function create () {
+            // create items in order how you want to show up on page (last one will be top level)
 
+            // Enable the Arcade Physcics sytem
+            game.physics.startSystem(Phaser.Physics.Arcade);
+
+            //Add background
             var dojo = game.add.sprite(game.world.centerX, game.world.centerY, 'dojo');
-            dojo.anchor.setTo(0.5, 0.5);
+            dojo.anchor.setTo(0.50, 0.50);
+            
+            
+            //Add bike sprite to the world 
+            game.add.sprite(0,0, 'bike');
 
+            //add platforms group to world.
+            platforms = game.add.group();
+
+            //enable physcics for objs created in the group.
+            platforms.enableBody = true;
+
+            //create the ground.  if image is used for ground, must be passed in 3rd parameter with the key name.  // Was 64
+            var ground = platforms.create(10, game.world.height - 64);
+
+            //Scale to fit the width of the game. 
+            ground.scale.setTo(2,2);
+
+            //stop from falling away when you jump on it
+            ground.body.immovable = true;
+
+            //--------------Player Info-----------------------//
+            // the player and it's settings.  create sprite pos. at 32px by 150 pix from bottom of game.  passing in preloaded image.
+            player = game.add.sprite(32, game.world.height - 150, 'dude');
+
+            //add physcics to the player
+            game.physics.arcade.enable(player);
+
+            //Player physcics properties giving a slight bounce.
+            player.body.bounce.y = 0.2;
+            player.body.gravity.y = 300;
+            player.body.collideWorldBounds = true;
+
+            //Two animations, walking left and right
+            //name, frames to use, 10frames per sec.  true tells animation to loop.
+            player.animations.add('left', [0, 1, 2, 3], 10, true);
+            player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+            //loads controls
+            cursors = game.input.keyboard.createCursorKeys();
         }
 
-    };
 
+
+        //called by the core game loop every time.
+        function update(){
+                    //  Collide the player and the stars with the platforms
+            game.physics.arcade.collide(player, platforms);
+
+            //  Reset the players velocity (movement)
+            player.body.velocity.x = 0;
+
+            if (cursors.left.isDown)
+            {
+                //  Move to the left
+                player.body.velocity.x = -150;
+
+                player.animations.play('left');
+            }
+            else if (cursors.right.isDown)
+            {
+                //  Move to the right
+                player.body.velocity.x = 150;
+
+                player.animations.play('right');
+            }
+            else
+            {
+                //  Stand still
+                player.animations.stop();
+
+                player.frame = 4;
+            }
+            
+            //  Allow the player to jump if they are touching the ground.
+            if (cursors.up.isDown && player.body.touching.down)
+            {
+                player.body.velocity.y = -350;
+            }
+        }
+
+    // }
     </script>
 
     </body>
