@@ -42,7 +42,7 @@ function create() {
     platforms.enableBody = true;
 
     // Here we create the ground.
-    var ground = platforms.create(5, game.world.height - 85, 'floor');
+    var ground = platforms.create(5, game.world.height - 80, 'floor');
 
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
     ground.scale.setTo(2, 2);
@@ -50,12 +50,6 @@ function create() {
     //  This stops it from falling away when you jump on it
     ground.body.immovable = true;
 
-    //  Now let's create two ledges
-    // var ledge = platforms.create(400, 400, 'ground');
-    // ledge.body.immovable = true;
-
-    // ledge = platforms.create(-150, 250, 'ground');
-    // ledge.body.immovable = true;
 
     // The player and its settings
     player = game.add.sprite(385, game.world.height - 550, 'dude');
@@ -85,9 +79,9 @@ function create() {
         var bike = bikes.create(i * 170, 0, 'bike');
 
         //gravity
-        bike.body.gravity.y = 60;
+        bike.body.gravity.y = 160;
 
-        bike.body.bounce.y = 0.7 + Math.random() * 0.2;
+        bike.body.bounce.y = 0.2 + Math.random() * 0.2;
     }
     
 }
@@ -97,6 +91,9 @@ function update() {
     //  Collide the player and the stars with the platforms
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(bikes, platforms);
+
+    //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+    game.physics.arcade.overlap(player, bikes, collectBike, null, this);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -130,6 +127,14 @@ function update() {
     }
 
 }
+
+function collectBike (player, bike)
+{
+    bike.kill();
+}
+
+
+
     </script>
 
     </body>
