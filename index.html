@@ -25,6 +25,7 @@ function preload() {
 var player;
 var platforms;
 var cursors;
+var bikes;
 
 function create() {
 
@@ -57,7 +58,7 @@ function create() {
     // ledge.body.immovable = true;
 
     // The player and its settings
-    player = game.add.sprite(32, game.world.height - 150, 'dude');
+    player = game.add.sprite(385, game.world.height - 550, 'dude');
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
@@ -73,6 +74,21 @@ function create() {
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
+
+    bikes = game.add.group();
+
+    bikes.enableBody = true;
+
+    for (var i = 0 ; i < 6; i++)
+    {
+        //create bike from bikesgroup
+        var bike = bikes.create(i * 170, 0, 'bike');
+
+        //gravity
+        bike.body.gravity.y = 60;
+
+        bike.body.bounce.y = 0.7 + Math.random() * 0.2;
+    }
     
 }
 
@@ -80,6 +96,7 @@ function update() {
 
     //  Collide the player and the stars with the platforms
     game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(bikes, platforms);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
