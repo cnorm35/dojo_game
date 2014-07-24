@@ -26,6 +26,8 @@ var player;
 var platforms;
 var cursors;
 var bikes;
+var score = 0;
+var scoreText; 
 
 function create() {
 
@@ -83,6 +85,8 @@ function create() {
 
         bike.body.bounce.y = 0.2 + Math.random() * 0.2;
     }
+
+    scoreText = game.add.text(16,16, 'score: 0', {fontSize: '32px', fill: '#fff'});
     
 }
 
@@ -131,6 +135,9 @@ function update() {
 function collectBike (player, bike)
 {
     bike.kill();
+
+    score += 10;
+    scoreText.text = "Score: " + score;
 }
 
 
